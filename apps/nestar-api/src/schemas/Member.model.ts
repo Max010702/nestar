@@ -36,7 +36,6 @@ const MemberSchema = new Schema(
 		memberPassword: {
 			type: String,
 			select: false,
-			requured: false,
 		},
 
 		memberFullName: {
