@@ -17,7 +17,8 @@ export class MemberService {
 			// TODO:  Authentication via TOKEN
 			return result;
 		} catch (err) {
-			console.log('Error, Service.model:', err.message);
+			const message = err instanceof Error ? err.message : 'Unknown error';
+			console.log('Error, Service.model:', message);
 			throw new BadRequestException(Message.USED_MEMBER_NICK_OR_PHONE);
 		}
 	}
