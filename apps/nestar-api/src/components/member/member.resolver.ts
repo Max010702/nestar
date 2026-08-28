@@ -42,9 +42,9 @@ export class MemberResolver {
 	@Roles(MemberType.USER, MemberType.AGENT)
 	@UseGuards(RolesGuard)
 	@Mutation(() => String)
-	public async checkAuthRoles(@AuthMember('authMember') authMember: Member): Promise<String> {
+	public async checkAuthRoles(@AuthMember() authMember: Member): Promise<String> {
 		console.log('Mutation: checkAuthRoles');
-		return `Hi ${authMember.memberNick}, you are ${authMember.memberType} memberId${authMember._id}`;
+		return `Hi ${authMember.memberNick}, you are ${authMember.memberType} (memberId: ${authMember._id})`;
 	}
 
 	@UseGuards(AuthGuard)
