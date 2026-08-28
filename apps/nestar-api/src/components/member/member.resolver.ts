@@ -10,7 +10,8 @@ import { MemberType } from '../../libs/enums/member.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
-import { getSerialForImage, shapeIntoMongoObjectId, validMimeTypes } from '../../libs/config';
+import { getSerialForImage, shapeIntoMongoObjectId, validMimeTypes, validExtensions } from '../../libs/config';
+import * as path from 'path';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { createWriteStream } from 'fs';
@@ -107,9 +108,11 @@ export class MemberResolver {
 		@Args('target') target: String,
 	): Promise<string> {
 		console.log('Mutation: imageUploader');
+		console.log('received mimetype:', JSON.stringify(mimetype));
 
 		if (!filename) throw new Error(Message.UPLOAD_FAILED);
-		const validMime = validMimeTypes.includes(mimetype);
+		const ext = path.parse(filename).ext.toLowerCase();
+		const validMime = validMimeTypes.includes(mimetype) || validExtensions.includes(ext);
 		if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
 
 		const imageName = getSerialForImage(filename);
@@ -136,12 +139,13 @@ export class MemberResolver {
 	): Promise<string[]> {
 		console.log('Mutation: imagesUploader');
 
-		const uploadedImages = [];
+		const uploadedImages: string[] = [];
 		const promisedList = files.map(async (img: Promise<FileUpload>, index: number): Promise<Promise<void>> => {
 			try {
 				const { filename, mimetype, encoding, createReadStream } = await img;
 
-				const validMime = validMimeTypes.includes(mimetype);
+				const ext = path.parse(filename).ext.toLowerCase();
+				const validMime = validMimeTypes.includes(mimetype) || validExtensions.includes(ext);
 				if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
 
 				const imageName = getSerialForImage(filename);
@@ -156,7 +160,7 @@ export class MemberResolver {
 				});
 				if (!result) throw new Error(Message.UPLOAD_FAILED);
 
-				const uploadedImages: string[] = [];
+				uploadedImages[index] = url;
 			} catch (err) {
 				console.log('Error, file missing!');
 			}
