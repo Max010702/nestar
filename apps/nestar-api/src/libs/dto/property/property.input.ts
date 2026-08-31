@@ -65,4 +65,5 @@ export class PropertyInput {
 	@IsOptional()
 	@Field(() => Date, { nullable: true })
 	constructedAt?: Date;
+	private _id: any;
 }
