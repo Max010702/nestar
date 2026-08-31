@@ -2,7 +2,7 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsIn, IsInt, IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
 import { PropertyLocation, PropertyStatus, PropertyType } from '../../enums/property.enum';
 import type { ObjectId } from 'mongoose';
-import { availableAgentSorts, availableOptions, availablePropertySorts } from '../../config';
+import { availableOptions, availablePropertySorts } from '../../config';
 
 @InputType()
 export class PropertyInput {
@@ -201,4 +201,41 @@ export class AgentPropertiesInquiry {
 	@IsNotEmpty()
 	@Field(() => APISearch)
 	search: APISearch;
+}
+
+@InputType()
+class ALPISearch {
+	@IsOptional()
+	@Field(() => PropertyStatus, { nullable: true })
+	propertyStatus?: PropertyStatus;
+
+	@IsOptional()
+	@Field(() => [PropertyLocation], { nullable: true })
+	propertyLocationList?: PropertyLocation[];
+}
+
+@InputType()
+export class AllPropertiesInquiry {
+	@IsNotEmpty()
+	@Min(1)
+	@Field(() => Int)
+	page: number;
+
+	@IsNotEmpty()
+	@Min(1)
+	@Field(() => Int)
+	limit: number;
+
+	@IsOptional()
+	@IsIn(availablePropertySorts)
+	@Field(() => String, { nullable: true })
+	sort?: string;
+
+	@IsOptional()
+	@Field(() => String, { nullable: true })
+	direction?: string;
+
+	@IsNotEmpty()
+	@Field(() => ALPISearch)
+	search: ALPISearch;
 }
