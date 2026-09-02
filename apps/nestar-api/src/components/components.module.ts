@@ -21,4 +21,4 @@ import { BoardArticleModule } from './board-article/board-article.module';
 		FollowModule,
 	],
 })
-export class ComponentsModule {}
+export class xComponentsModule {}
